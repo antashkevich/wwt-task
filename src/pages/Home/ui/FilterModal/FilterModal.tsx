@@ -5,6 +5,7 @@ import { useFilters } from '@/shared/api/filters/useFilters'
 import { useFocusTrap } from '@/shared/lib/useFocusTrap'
 import { useFiltersStore } from '@/shared/store/useFiltersStore'
 
+import { CheckboxCheckedIcon } from './CheckboxCheckedIcon'
 import { CloseIcon } from './CloseIcon'
 import { ConfirmDialog } from './ConfirmDialog'
 import { buildDraft, draftToSearchRequest } from './lib'
@@ -48,7 +49,9 @@ export const FilterModal = ({ onClose }: FilterModalProps) => {
 
 	return (
 		<div
-			className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4"
+			className={`fixed inset-0 z-50 flex items-start justify-center overflow-y-auto px-0 pb-0 pt-8 sm:p-20 ${
+				isConfirmOpen ? '' : 'bg-[#1b1b1b]/30 backdrop-blur-[25px]'
+			}`}
 			onClick={onClose}
 		>
 			<div
@@ -57,14 +60,14 @@ export const FilterModal = ({ onClose }: FilterModalProps) => {
 				aria-modal="true"
 				aria-labelledby="filter-modal-title"
 				tabIndex={-1}
-				className="my-6 w-full max-w-4xl rounded-2xl bg-white shadow-xl outline-none"
+				className="min-h-dvh w-full max-w-7xl rounded-b-none rounded-t-2xl bg-white px-4 pb-10 pt-4 shadow-xl outline-none sm:min-h-0 sm:rounded-2xl sm:px-8"
 				onClick={event => event.stopPropagation()}
 			>
 				{/* Header */}
-				<div className="relative border-b border-gray-200 px-8 py-5">
+				<div className="relative border-b-2 border-grey-200 pb-4 pt-5">
 					<h2
 						id="filter-modal-title"
-						className="text-center text-[2rem] font-medium text-ink"
+						className="text-center text-2xl font-medium text-ink sm:text-[2.5rem]"
 					>
 						{t('modalTitle')}
 					</h2>
@@ -72,57 +75,65 @@ export const FilterModal = ({ onClose }: FilterModalProps) => {
 						type="button"
 						onClick={onClose}
 						aria-label={t('close')}
-						className="absolute right-6 top-1/2 -translate-y-1/2 cursor-pointer text-ink hover:opacity-70"
+						className="absolute right-0 top-1/2 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center text-ink hover:opacity-70 focus-visible:opacity-70"
 					>
 						<CloseIcon />
 					</button>
 				</div>
 
 				{/* Body */}
-				<div className="px-8 py-6">
+				<div>
 					{isLoading && <p>{t('loading')}</p>}
 
 					{filters?.map(category => (
-						<fieldset
+						<div
 							key={category.id}
-							className="border-b border-gray-200 py-6 first:pt-0"
+							role="group"
+							aria-labelledby={`filter-group-${category.id}`}
+							className="border-b-2 border-grey-200 py-6"
 						>
-							<legend className="mb-4 text-xl font-semibold text-ink">
+							<h3
+								id={`filter-group-${category.id}`}
+								className="mb-5 text-2xl font-medium text-ink"
+							>
 								{category.name}
-							</legend>
-							<div className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+							</h3>
+							<div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
 								{category.options.map(option => (
 									<label
 										key={option.id}
-										className="flex cursor-pointer items-center gap-3 text-base text-ink"
+										className="flex cursor-pointer items-center gap-4 text-base text-ink"
 									>
-										<input
-											type="checkbox"
-											checked={(draft[category.id] ?? []).includes(option.id)}
-											onChange={() => toggleOption(category.id, option.id)}
-											className="h-5 w-5 shrink-0 accent-ink"
-										/>
+										<span className="relative inline-flex h-5 w-5 shrink-0">
+											<input
+												type="checkbox"
+												checked={(draft[category.id] ?? []).includes(option.id)}
+												onChange={() => toggleOption(category.id, option.id)}
+												className="peer h-5 w-5 cursor-pointer appearance-none rounded-sm border-2 border-ink hover:bg-grey-100 checked:border-transparent"
+											/>
+											<CheckboxCheckedIcon className="pointer-events-none absolute inset-0 hidden h-5 w-5 text-ink peer-checked:block" />
+										</span>
 										<span>{option.name}</span>
 									</label>
 								))}
 							</div>
-						</fieldset>
+						</div>
 					))}
 				</div>
 
 				{/* Footer */}
-				<div className="relative flex flex-col items-center gap-4 px-8 py-6 sm:flex-row sm:justify-center">
+				<div className="relative flex flex-col items-center gap-4 pt-8 sm:flex-row sm:justify-center">
 					<button
 						type="button"
 						onClick={() => setIsConfirmOpen(true)}
-						className="h-16 cursor-pointer rounded-2xl bg-brand px-10 font-semibold text-white hover:bg-brand-hover"
+						className="h-16 cursor-pointer rounded-2xl bg-brand px-18 font-semibold text-white hover:bg-brand-hover focus-visible:bg-brand-hover"
 					>
 						{t('apply')}
 					</button>
 					<button
 						type="button"
 						onClick={clearAll}
-						className="cursor-pointer font-medium text-accent underline sm:absolute sm:right-8"
+						className="cursor-pointer font-medium text-accent underline hover:opacity-70 focus-visible:opacity-70 sm:absolute sm:right-0"
 					>
 						{t('clearAll')}
 					</button>
@@ -132,7 +143,7 @@ export const FilterModal = ({ onClose }: FilterModalProps) => {
 			{isConfirmOpen && (
 				<ConfirmDialog
 					onDismiss={() => setIsConfirmOpen(false)}
-					onUseOld={() => setIsConfirmOpen(false)}
+					onUseOld={onClose}
 					onApplyNew={handleApplyNew}
 				/>
 			)}

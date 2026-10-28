@@ -17,7 +17,7 @@ export const App = () => {
 			<button
 				type="button"
 				onClick={() => setIsModalOpen(true)}
-				className="h-16 cursor-pointer rounded-2xl bg-brand px-10 font-semibold text-white hover:bg-brand-hover"
+				className="h-16 cursor-pointer rounded-2xl bg-brand px-10 font-semibold text-white hover:bg-brand-hover focus-visible:bg-brand-hover"
 			>
 				{t('openFilters')}
 			</button>

@@ -6,8 +6,16 @@
 	--color-brand-hover: #ff3d00;
 	--color-accent: #078691;
 	--color-ink: #31393c;
+	--color-grey-100: #f4f4f4;
+	--color-grey-200: #b4b4b4;
 }
 
+html,
 body {
 	font-family: 'Inter', sans-serif;
+}
+
+/* Buttons show their hover appearance on keyboard focus instead of the default ring. */
+button:focus-visible {
+	outline: none;
 }
