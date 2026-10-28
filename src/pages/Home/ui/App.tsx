@@ -1,10 +1,37 @@
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { useFiltersStore } from '@/shared/store/useFiltersStore'
+
+import { FilterModal } from './FilterModal'
+
 export const App = () => {
+	const { t } = useTranslation('filter')
+	const [isModalOpen, setIsModalOpen] = useState(false)
+	const appliedFilters = useFiltersStore(state => state.appliedFilters)
+
 	return (
-		<section className="w-full h-dvh flex items-center justify-center">
-			{/* eslint-disable-next-line i18next/no-literal-string */}
-			<h1 className="text-6xl text-gray-600 mb-12">
-				WinWinTravel frontend test task
-			</h1>
+		<section className="flex min-h-dvh flex-col items-center justify-center gap-8 p-6">
+			<h1 className="text-3xl font-semibold text-gray-700">{t('demoTitle')}</h1>
+
+			<button
+				type="button"
+				onClick={() => setIsModalOpen(true)}
+				className="rounded-lg bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700"
+			>
+				{t('openFilters')}
+			</button>
+
+			<div className="w-full max-w-lg">
+				<h2 className="mb-2 text-sm font-medium text-gray-500">
+					{t('selectedFilters')}
+				</h2>
+				<pre className="overflow-auto rounded-lg bg-gray-100 p-4 text-xs text-gray-800">
+					{JSON.stringify(appliedFilters, null, 2)}
+				</pre>
+			</div>
+
+			{isModalOpen && <FilterModal onClose={() => setIsModalOpen(false)} />}
 		</section>
 	)
 }
