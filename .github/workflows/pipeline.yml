@@ -33,3 +33,6 @@ jobs:
 
       - name: Run lint
         run: npm run lint:all
+
+      - name: Run tests
+        run: npx vitest run
