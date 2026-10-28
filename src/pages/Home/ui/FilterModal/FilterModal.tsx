@@ -2,23 +2,13 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useFilters } from '@/shared/api/filters/useFilters'
-import { FilterType } from '@/shared/api/types/Filter'
-import { SearchRequestFilter } from '@/shared/api/types/SearchRequest/SearchRequestFilter'
 import { useFiltersStore } from '@/shared/store/useFiltersStore'
+
+import { buildDraft, draftToSearchRequest } from './lib'
 
 interface FilterModalProps {
 	onClose: () => void
 }
-
-const buildDraft = (applied: SearchRequestFilter): Record<string, string[]> =>
-	Object.fromEntries(applied.map(filter => [filter.id, filter.optionsIds]))
-
-const draftToSearchRequest = (
-	draft: Record<string, string[]>
-): SearchRequestFilter =>
-	Object.entries(draft)
-		.filter(([, optionsIds]) => optionsIds.length > 0)
-		.map(([id, optionsIds]) => ({ id, type: FilterType.OPTION, optionsIds }))
 
 const CloseIcon = () => (
 	<svg
