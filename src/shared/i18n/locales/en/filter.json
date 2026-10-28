@@ -1,1 +1,13 @@
-{}
+{
+	"demoTitle": "Filters demo",
+	"openFilters": "Open filters",
+	"selectedFilters": "Selected filters (debug)",
+	"modalTitle": "Filter",
+	"close": "Close",
+	"loading": "Loading…",
+	"apply": "Apply",
+	"clearAll": "Clear all parameters",
+	"confirmTitle": "Do you want to apply new filter",
+	"confirmUseOld": "Use old filter",
+	"confirmApplyNew": "Apply new filter"
+}
