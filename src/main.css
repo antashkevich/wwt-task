@@ -1,2 +1,13 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+
+@theme {
+	--color-brand: #ff5f00;
+	--color-brand-hover: #ff3d00;
+	--color-accent: #078691;
+	--color-ink: #31393c;
+}
+
+body {
+	font-family: 'Inter', sans-serif;
+}
