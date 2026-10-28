@@ -25,7 +25,7 @@ describe('FilterModal', () => {
 		useFiltersStore.setState({ appliedFilters: [] })
 	})
 
-	it('keeps the applied filters unchanged when the user keeps the old filter', async () => {
+	it('keeps old filters and returns to the modal when the user keeps the old filter', async () => {
 		renderModal()
 
 		const option = await screen.findByLabelText('Breakfast included')
@@ -33,7 +33,14 @@ describe('FilterModal', () => {
 		fireEvent.click(screen.getByRole('button', { name: 'Apply' }))
 		fireEvent.click(screen.getByRole('button', { name: 'Use old filter' }))
 
+		// Applied filters are untouched...
 		expect(useFiltersStore.getState().appliedFilters).toEqual([])
+		// ...the confirmation is closed...
+		expect(
+			screen.queryByRole('button', { name: 'Apply new filter' })
+		).not.toBeInTheDocument()
+		// ...and the modal stays open (draft is kept).
+		expect(screen.getByRole('button', { name: 'Apply' })).toBeInTheDocument()
 	})
 
 	it('saves the selected filters when the user applies the new filter', async () => {

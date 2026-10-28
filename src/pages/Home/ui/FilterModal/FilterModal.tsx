@@ -1,28 +1,17 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useFilters } from '@/shared/api/filters/useFilters'
+import { useFocusTrap } from '@/shared/lib/useFocusTrap'
 import { useFiltersStore } from '@/shared/store/useFiltersStore'
 
+import { CloseIcon } from './CloseIcon'
+import { ConfirmDialog } from './ConfirmDialog'
 import { buildDraft, draftToSearchRequest } from './lib'
 
 interface FilterModalProps {
 	onClose: () => void
 }
-
-const CloseIcon = () => (
-	<svg
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		stroke="currentColor"
-		strokeWidth="2"
-		strokeLinecap="round"
-	>
-		<path d="M6 6l12 12M18 6L6 18" />
-	</svg>
-)
 
 export const FilterModal = ({ onClose }: FilterModalProps) => {
 	const { t } = useTranslation('filter')
@@ -35,6 +24,9 @@ export const FilterModal = ({ onClose }: FilterModalProps) => {
 		buildDraft(appliedFilters)
 	)
 	const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+
+	const dialogRef = useRef<HTMLDivElement>(null)
+	useFocusTrap(dialogRef, onClose)
 
 	const toggleOption = (categoryId: string, optionId: string) => {
 		setDraft(prev => {
@@ -59,12 +51,20 @@ export const FilterModal = ({ onClose }: FilterModalProps) => {
 			onClick={onClose}
 		>
 			<div
-				className="my-6 w-full max-w-4xl rounded-2xl bg-white shadow-xl"
+				ref={dialogRef}
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="filter-modal-title"
+				tabIndex={-1}
+				className="my-6 w-full max-w-4xl rounded-2xl bg-white shadow-xl outline-none"
 				onClick={event => event.stopPropagation()}
 			>
 				{/* Header */}
 				<div className="relative border-b border-gray-200 px-8 py-5">
-					<h2 className="text-center text-2xl font-bold text-gray-900">
+					<h2
+						id="filter-modal-title"
+						className="text-center text-2xl font-bold text-gray-900"
+					>
 						{t('modalTitle')}
 					</h2>
 					<button
@@ -128,50 +128,12 @@ export const FilterModal = ({ onClose }: FilterModalProps) => {
 				</div>
 			</div>
 
-			{/* Confirm dialog */}
 			{isConfirmOpen && (
-				<div
-					className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
-					onClick={event => {
-						event.stopPropagation()
-						setIsConfirmOpen(false)
-					}}
-				>
-					<div
-						className="w-full max-w-xl rounded-2xl bg-white p-8 shadow-xl"
-						onClick={event => event.stopPropagation()}
-					>
-						<div className="mb-10 flex items-start justify-between">
-							<h3 className="text-2xl font-semibold text-gray-900">
-								{t('confirmTitle')}
-							</h3>
-							<button
-								type="button"
-								onClick={() => setIsConfirmOpen(false)}
-								aria-label={t('close')}
-								className="text-gray-500 hover:text-gray-900"
-							>
-								<CloseIcon />
-							</button>
-						</div>
-						<div className="flex justify-center gap-4">
-							<button
-								type="button"
-								onClick={onClose}
-								className="rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-800 hover:bg-gray-50"
-							>
-								{t('confirmUseOld')}
-							</button>
-							<button
-								type="button"
-								onClick={handleApplyNew}
-								className="rounded-lg bg-[#F85C00] px-6 py-3 font-medium text-white hover:bg-[#dd5200]"
-							>
-								{t('confirmApplyNew')}
-							</button>
-						</div>
-					</div>
-				</div>
+				<ConfirmDialog
+					onDismiss={() => setIsConfirmOpen(false)}
+					onUseOld={() => setIsConfirmOpen(false)}
+					onApplyNew={handleApplyNew}
+				/>
 			)}
 		</div>
 	)
